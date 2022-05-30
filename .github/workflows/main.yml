@@ -9,7 +9,7 @@ jobs:
       - run: |
           npm install
           npm run build
-          tar -czvf ${{ github.ref_name }}.tar.gz .
+          tar -czvf ${{ github.ref_name }}.tar.gz ./dist
 
       - name: create release
         uses: actions/create-release@v1

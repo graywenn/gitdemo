@@ -12,7 +12,7 @@ jobs:
           tar -czvf ${{ github.ref_name }}.tar.gz .
 
       - name: create release
-        uses: actions/create-release@v2
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:

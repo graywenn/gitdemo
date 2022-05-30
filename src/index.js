@@ -1,8 +1,8 @@
-var http = require("http");
+const express = require("express");
+const app = express();
+const port = 3333;
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-http
-  .createServer(function (req, res) {
-    res.write("Hello world!");
-    res.end();
-  })
-  .listen(3333);
+app.listen(3333, console.log(`App listening on port ${port}`));

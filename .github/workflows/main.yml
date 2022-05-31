@@ -2,7 +2,7 @@ name: main
 on:
   push:
     branches:
-      - main
+      - "main"
 # on: [push,pull_request]
 jobs:
   deplpy-job:

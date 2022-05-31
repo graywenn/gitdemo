@@ -1,27 +1,47 @@
 name: dev
-on: 
-  push: 
+on:
+  push:
     branches:
       - "dev"
-  
-jobs: 
+
+jobs:
   delpoy-dev:
     runs-on: ubuntu-latest
     steps:
-     - name: Get code
-       uses: actions/checkout@v3
-     - run: |
-        npm install
-        npm run build
-        
-     - name: Upload
-       uses: kostya-ten/ssh-server-deploy@v4
-       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        port: ${{ secrets.SSH_PORT }}
-        scp_source: "./dist/"
-        scp_target: "/root/test/"
-        after_script: |
-          pm2 restart index
+      - name: Get code
+        uses: actions/checkout@v3
+      - run: |
+          npm install
+          npm run build
+          tar -czvf ${{ github.ref_name }}.tar.gz ./dist
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+
+      - name: Upload release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ github.ref_name }}.tar.gz
+          asset_name: ${{ github.ref_name }}.tar.gz
+          asset_content_type: application/x-tar
+
+      - name: Upload
+        uses: kostya-ten/ssh-server-deploy@v4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          scp_source: "./dist/"
+          scp_target: "/root/test/"
+          after_script: |
+            pm2 restart index

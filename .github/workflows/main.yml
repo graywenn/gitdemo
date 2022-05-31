@@ -21,4 +21,4 @@ jobs:
           scp_source: "./dist/"
           scp_target: "/root/test/"
           after_script: |
-            pm2 start "./dist/index.js"
+            pm2 start "/root/test/dist/index.js"
